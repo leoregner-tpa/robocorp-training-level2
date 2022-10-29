@@ -64,7 +64,7 @@ Process Order
     Export PDF
     Insert Picture into PDF
     Click Button    id:order-another
-    Store PDF    output${/}${order}[Order number].pdf
+    Store PDF    ${order}[Order number]
 
 Select Head
     [Arguments]    ${id}
@@ -84,7 +84,7 @@ Take Picture of Robot
     Wait Until Element Is Visible    css:[alt=Head]
     Wait Until Element Is Visible    css:[alt=Body]
     Wait Until Element Is Visible    css:[alt=Legs]
-    Capture Element Screenshot    id:robot-preview-image    robot.png
+    RPA.Browser.Selenium.Capture Element Screenshot    id:robot-preview-image    robot.png
 
 Export PDF
     Wait Until Element Is Visible    id:receipt
@@ -98,8 +98,9 @@ Insert Picture into PDF
     Add Files To Pdf    ${files}    summary.pdf
 
 Store PDF
-    [Arguments]    ${filePath}
-    Copy File    summary.pdf    ${filePath}
+    [Arguments]    ${fileName}
+    Create Directory    temp
+    Copy File    summary.pdf    temp${/}${fileName}.pdf
 
 Ask For Filename
     Add text input    filePath    File Name:
@@ -108,7 +109,7 @@ Ask For Filename
 
 Archive Order Summaries
     [Arguments]    ${fileName}
-    Archive Folder With Zip    output    ${OUTPUT_DIR}${/}${fileName}.zip
+    Archive Folder With Zip    temp    ${OUTPUT_DIR}${/}${fileName}.zip
 
 Clean Up
     TRY
@@ -116,6 +117,7 @@ Clean Up
         Remove File    robot.png
         Remove File    receipt.pdf
         Remove File    summary.pdf
+        Remove Directory    temp    recursive=${True}
     FINALLY
         Close Browser
     END
